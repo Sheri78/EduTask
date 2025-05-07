@@ -45,8 +45,13 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
           Container(
             height: MediaQuery.of(context).size.height * 0.4,
             decoration: BoxDecoration(
+              // color: Colors.blue,
               gradient: const LinearGradient(
-                colors: [Color(0xFFF8746E), Color(0xFFFCB69F)],
+                colors: [ Color(0xFF66a6ff),Color(0xFF89f7fe)],
+                // colors: [Color(0xFF396afc), Color(0xFF2948ff)],
+                // colors: [Color(0xFF396afc), Color(0xFF2948ff)],
+                // colors: [Color(0xFF43C6AC), Color(0xFF191654)],
+                // colors: [Color(0xFF000046), Color(0xFF1CB5E0)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -96,8 +101,8 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                             ),
                             SizedBox(height: 10),
                             Text(
-                              'Manage your Assignments, Exams, and Projects',
-                              style: TextStyle(color: Colors.white70, fontSize: 14),
+                              'Prioritize Organize Execute',
+                              style: TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -128,8 +133,8 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Color(0xFFF8746F),
-        child: const Icon(Icons.add),
+        backgroundColor: Colors.blue,
+        child: const Icon(Icons.add,color: Colors.white,),
         onPressed: () => Get.to(() => AddTaskScreen()),
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -148,7 +153,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
+        selectedItemColor: Colors.blue,
         onTap: _onItemTapped,
       ),
     );
@@ -162,7 +167,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
           DrawerHeader(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFFF8746E), Color(0xFFFCB69F)],
+                colors: [Color(0xFF66a6ff),Color(0xFF89f7fe)],
               ),
             ),
             child: Obx(() {

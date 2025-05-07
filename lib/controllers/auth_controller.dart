@@ -1,10 +1,14 @@
+import 'package:edutask/controllers/task_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:edutask/screens/student/student_home_page.dart';
 import 'package:edutask/screens/auth/login_screen.dart';
+
+import '../screens/admin/admin_home_screen.dart';
 
 class AuthController extends GetxController {
   static AuthController get instance => Get.find();
@@ -30,13 +34,19 @@ class AuthController extends GetxController {
     super.onInit();
   }
 
-  void _handleAuthStateChange(User? user) {
+  void _handleAuthStateChange(User? user) async {
     if (user == null) {
       Get.offAll(() => LoginPage());
     } else {
-      Get.offAll(() => StudentHomeScreen());
+      final role = await getUserRole(user.uid);
+      if (role == 'admin') {
+        Get.offAll(() => AdminHomeScreen());
+      } else {
+        Get.offAll(() => StudentHomeScreen());
+      }
     }
   }
+
 
   // Email & Password Authentication
   Future<void> registerWithEmailAndPassword({
@@ -79,7 +89,7 @@ class AuthController extends GetxController {
     required String email,
     required String password,
     bool rememberMe = false,
-  }) async {
+   }) async {
     try {
       isLoading(true);
       errorMessage('');
@@ -100,6 +110,25 @@ class AuthController extends GetxController {
       rethrow;
     } finally {
       isLoading(false);
+    }
+  }
+  Future<void> login(String email, String password) async {
+    try {
+      final UserCredential userCredential = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      final userDoc = await _firestore.collection('users').doc(userCredential.user!.uid).get();
+
+      if (userDoc.exists) {
+        final role = userDoc['role'];
+        if (role == 'admin') {
+          Get.offAll(() => AdminHomeScreen());
+          Fluttertoast.showToast(msg: 'Admin login successful');
+        } else {
+          Get.offAll(() => StudentHomeScreen());
+          Fluttertoast.showToast(msg: 'Student login successful');
+        }
+      }
+    } catch (e) {
+      Fluttertoast.showToast(msg: 'Login failed');
     }
   }
 
@@ -160,16 +189,22 @@ class AuthController extends GetxController {
   }
 
   // Logout
-  Future<void> logout() async {
-    try {
-      await _auth.signOut();
-      await _googleSignIn.signOut();
-      await _clearCredentials();
-    } catch (e) {
-      errorMessage('Logout failed. Please try again.');
-      rethrow;
-    }
+  // Future<void> logout() async {
+  //   try {
+  //     await _auth.signOut();
+  //     await _googleSignIn.signOut();
+  //     await _clearCredentials();
+  //   } catch (e) {
+  //     errorMessage('Logout failed. Please try again.');
+  //     rethrow;
+  //   }
+  // }
+  void logout() async {
+    await _auth.signOut();
+    Get.find<TaskController>().tasks.clear(); // 👈 Clear old tasks
+    Get.offAll(() => LoginPage());
   }
+
 
   // Helper Methods
   String _getAuthErrorMessage(FirebaseAuthException e) {

@@ -102,10 +102,9 @@ class LoginPage extends StatelessWidget {
                         ? null
                         : () {
                       if (_formKey.currentState!.validate()) {
-                        authController.loginWithEmailAndPassword(
-                          email: _emailController.text.trim(),
-                          password: _passwordController.text.trim(),
-                          rememberMe: _rememberMe.value,
+                        authController.login(
+                          _emailController.text.trim(),
+                          _passwordController.text.trim(),
                         );
                       }
                     },
